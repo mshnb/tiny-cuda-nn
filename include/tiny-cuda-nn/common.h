@@ -76,7 +76,6 @@ using network_precision_t = std::conditional_t<TCNN_HALF_PRECISION, __half, floa
 
 enum class Activation {
 	ReLU,
-	LeakyReLU,
 	Exponential,
 	Sine,
 	Sigmoid,
