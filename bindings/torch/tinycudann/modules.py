@@ -151,9 +151,10 @@ class _module_function_backward(torch.autograd.Function):
 		return None, doutput_grad, input_grad, params_grad, None
 
 class Module(torch.nn.Module):
-	def __init__(self, seed=1337):
+	def __init__(self, seed=1337, device_idx=0):
 		super(Module, self).__init__()
 
+		self.device_idx = device_idx
 		self.native_tcnn_module = self._native_tcnn_module()
 		self.dtype = _torch_precision(self.native_tcnn_module.param_precision())
 
@@ -299,7 +300,7 @@ class Encoding(Module):
 		may yield higher numerical accuracy, but is generally slower.
 		A value of `torch.half` may not be supported on all systems.
 	"""
-	def __init__(self, n_input_dims, encoding_config, seed=1337, dtype=None):
+	def __init__(self, n_input_dims, encoding_config, seed=1337, dtype=None, device_idx=0):
 		self.n_input_dims = n_input_dims
 		self.encoding_config = encoding_config
 		if dtype is None:
@@ -312,9 +313,9 @@ class Encoding(Module):
 			else:
 				raise ValueError(f"Encoding only supports fp32 or fp16 precision, but got {dtype}")
 
-		super(Encoding, self).__init__(seed=seed)
+		super(Encoding, self).__init__(seed=seed,device_idx=device_idx)
 
 		self.n_output_dims = self.native_tcnn_module.n_output_dims()
 
 	def _native_tcnn_module(self):
-		return _C.create_encoding(self.n_input_dims, self.encoding_config, self.precision)
+		return _C.create_encoding(self.n_input_dims, self.encoding_config, self.precision, self.device_idx)

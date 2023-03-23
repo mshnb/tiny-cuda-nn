@@ -296,7 +296,8 @@ Module create_network(uint32_t n_input_dims, uint32_t n_output_dims, const nlohm
 }
 #endif
 
-Module create_encoding(uint32_t n_input_dims, const nlohmann::json& encoding, tcnn::cpp::EPrecision requested_precision) {
+Module create_encoding(uint32_t n_input_dims, const nlohmann::json& encoding, tcnn::cpp::EPrecision requested_precision, uint8_t device_index = 0) {
+	const at::cuda::CUDAGuard device_guard(device_index);
 	return Module{tcnn::cpp::create_encoding(n_input_dims, encoding, requested_precision)};
 }
 
